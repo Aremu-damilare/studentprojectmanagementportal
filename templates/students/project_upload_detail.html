@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% block content %}
+<style>
+  .form-control{
+    width: auto;
+  }
+</style>
+
+
+  <br><h2 class="text-center"> <p> Project Topic: {{ project.title }}</p>  </h2><br>
+  <div class="p-4 shadow-4 rounded-3">
+    <div class="rounded-top border border-1 p-3 text-center">
+     
+        <h1>
+            {{ object.title }}
+        </h1> <br>
+        <p>
+            {{ object.detail }}
+        </p>
+  
+        <p> {% if object.file %}
+          <a href="{{object.file.url }}">document</a>          
+          {% endif %}
+        </p>
+        <p> {% if object.file2 %}
+          <a href="{{object.file2.url }}">document</a>          
+          {% endif %}
+        </p>
+
+        <br><br><br>
+        <div class="rounded border border-2 p-1" style="background-color: rgba(151, 107, 107, 0.808);"><br>
+          {% if object.status == 'approved' %}
+          <small> <img height="30px" src="{% static 'img/verified.svg' %}" alt="vverified"> {{ object.status }}</small>
+          {% endif %}
+
+          {% if object.status == 'pending' %}
+          <small> <img height="30px" src="{% static 'img/unverified.svg' %}" alt="vverified"> {{ object.status }}</small>
+          {% endif %}
+
+          {% if object.status == 'declined' %}
+          <small> <img height="30px" src="{% static 'img/declined.svg' %}" alt="vverified"> {{ object.status }}</small>
+          {% endif %}
+                <br>
+        <p> Supervisor: {{ project.supervisor }}</p>       
+        <br> 
+        </div>
+    </div>
+    <br>
+    <div class="rounded border border-3 p-3" style="background-color: rgba(228, 205, 205, 0.808);">
+      {% for comment in comments %}
+      {% if comment.user.is_student %}
+        <b style="color: green;">{{ comment.user }}:</b>  
+      {% endif  %}        
+      
+      {% if comment.user.is_supervisor %}
+      <b style="color: rgb(34, 0, 128);">{{ comment.user }}:</b>  
+      {% endif  %}      
+
+        <small>{{ comment.created_on|timesince }} ago</small>
+        <br>
+        <p > {{ comment.comment }}</p>
+        <br><br>
+        <hr>
+    {% empty %}
+        <p>Feel free to leave the first comment!</p>
+    {% endfor %}
+
+    <small> Write review or comment </small>
+    <form method="post" action="{% url 'project_upload_detail' object.pk %}">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button type="submit" class="btn btn-success"> send </button>
+        <a href="" class="btn btn-outline-secondary" role="button">Nevermind</a>
+        {% for message in messages %}
+        <li class="{{ message.tags }}">
+        {{ message }}
+        </li>
+        {% endfor %}
+      </form>
+    </div>      
+
+  </div>
+{% endblock %}

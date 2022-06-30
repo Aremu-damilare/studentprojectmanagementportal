@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+  .form-control{
+    width: auto;
+  }
+</style>
+
+
+<div class="card">
+  <div class="card-body">
+    <h5 class="card-title"> Student Meeting </h5>    
+    <br><br>
+    <h4> Recent Meetings and Status</h4>
+  
+    {% for i in object_list %}
+      <span>
+        <p> <a href="{% url 'meeting_detail' i.pk %}">{{i.title}}</a> 
+          <!-- <small>( {{i.status}} )</small>  -->
+        </p>                        
+      </span>            
+      <!-- {% if i.is_updated %}
+        (*_*)
+      {% endif %} -->
+    {% endfor %}
+  </div>
+</div>
+
+<br>
+<div class="rounded-top border border-1 p-3 text-center">
+  <div class="rounded border border-3 p-3" style="background-color: rgba(180, 164, 164, 0.808);">
+    <h3> Student-Supervisor Meeting Schedule</h3>
+
+        <!-- <a href="{% url 'defence_call' %}"> Create Message</a>       -->
+          <br><br>
+          <form class="form-control" action="{% url 'meeting_create' %}" method="post">
+            {% csrf_token %}
+            <label for="title"> Title </label><br>
+            <input  type="text" name="title" />
+              <br><br>
+            <label for="datetime"> Date-Time of Meeting </label><br>
+            <input  type="datetime-local" name="datetime" />
+            <br><br>
+
+            <label for="detail"> Detail </label><br>
+            <!-- <input type="text" name="detail" /> -->
+            <textarea name="detail" id="" cols="20" rows="5"></textarea>
+
+            <br><br>
+            <button type="submit" class="btn btn-success"> Set Up Meeting</button>
+          </form>       
+
+  </div>
+ 
+</div>
+
+{% endblock %}
+
+{% block js %}
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+{% endblock %}
