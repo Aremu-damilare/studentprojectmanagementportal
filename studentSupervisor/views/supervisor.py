@@ -1,4 +1,3 @@
-from tkinter.filedialog import askdirectory
 from django.views.generic import CreateView, ListView, UpdateView, DetailView
 from django.contrib.auth import get_user_model
 from ..models import ProjectMessage, ProjectUplaod, Student, Project, Supervisor, ProjectComment, \
@@ -486,3 +485,21 @@ class SupervisorMeetingUpdate(UpdateView):
         supervisor_read=True) 
 
         return redirect(self.request.META.get('HTTP_REFERER', 'redirect_if_referer_not_found'))
+
+from ..forms import SupervisorSignUpForm
+from django.contrib.auth import login
+
+
+class SupervisorSignUpView(CreateView):
+    model = User
+    form_class = SupervisorSignUpForm
+    template_name = 'registration/supervisor_signup_form.html'
+
+    def get_context_data(self, **kwargs):
+        kwargs['user_type'] = 'supervisor'
+        return super().get_context_data(**kwargs)
+
+    def form_valid(self, form):
+        user = form.save()
+        login(self.request, user, backend='django.contrib.auth.backends.ModelBackend')
+        return redirect('home')

@@ -1,6 +1,16 @@
 {% extends 'base.html' %}
 {% block content %}
 {% load static %}
+
+<style>
+  .supervisor-menu{
+  color: black;
+  padding: 8px;
+  background-color: #e7e7e7; color: black;
+}
+</style>
+
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script>
 $(document).ready(function(){
@@ -33,7 +43,9 @@ $(document).ready(function(){
 
 <br><br><br>
 <!-- <h3>Uploaded Projects <a href="{% url 'project_upload' %}" class="btn btn-primary">Upload new project content</a></h3>      -->
-<a href="/accounts/logout" style="color: red; align-items: right;" > (logout) </a>
+<a href="/accounts/logout" class="btn btn-outline-danger" > logout </a>
+<br><br>
+
 {% for n in notice %}    
 <div class="alert alert-primary alert-dismissible fade show" role="alert">
   <strong></strong>{{ n.notice|safe }}.
@@ -51,8 +63,7 @@ $(document).ready(function(){
 <table class="table align-middle mb-0 bg-white">
   <thead class="bg-light">
     <tr>
-      <th>Title</th>
-      <th>Status</th>     
+      <th>Title</th>     
     </tr>
   </thead>
   <tbody>
@@ -68,9 +79,10 @@ $(document).ready(function(){
               />
 
           <div class="ms-3">
-            <p class="fw-bold mb-1"><a href="#" class=""> {{i.student}}</a> ( <a href="javascript:;" class="btn2"> View Students </a> ) </p>
-
-            <p style="display: none;" class="border border-1 p-3 profile"> 
+            <p class="fw-bold mb-1"><a href="#" class=" btn2"> {{i.student}}</a>   {{i.status}} </p>
+            <a role="button"  class="btn btn-success btn-sm" href="{%  url 'view_messages_supervisor' i.student_id %}"> message </a> 
+            <br><br>
+            <p  class="border border-1 p-3 profile"> 
               First name: {{i.student.user.first_name}}<br>
               Last name: {{i.student.user.last_name}}<br>
               Institution: {{i.student.user.institution}}<br>
@@ -87,18 +99,17 @@ $(document).ready(function(){
             <!-- <a class="">Show</a> -->
 
             <p class="text-muted mb-0">{{i.title}}</p>
+            
             <p class="text-muted">
-                <a href="{%  url 'view_messages_supervisor' i.student_id %}"> (message)</a>| 
-                <a href="{%  url 'defence_call_list_supervisor' i.student_id %}"> (Defence)</a> <br>
-                <a href="{%  url 'project_upload_list_supervisor' i.student_id %}"> (Project)</a>
-                <a href="{%  url 'supervisor_meeting_list' i.student_id %}"> (Meeting)</a>
+
+                
+                <a  class="btn btn-secondary" href="{%  url 'defence_call_list_supervisor' i.student_id %}"> Defence </a> 
+                <a  class="btn btn-secondary" href="{%  url 'project_upload_list_supervisor' i.student_id %}"> Project </a>
+                <a  class="btn btn-secondary" href="{%  url 'supervisor_meeting_list' i.student_id %}">  Meeting </a>
                 
             </p>
           </div>
-        </div>
-      </td>
-      <td>
-        <p class="fw-normal mb-1"> {{i.status}} </p>
+        </div>              
         <!-- <p class="text-muted mb-0">IT department</p> -->
       </td>
      

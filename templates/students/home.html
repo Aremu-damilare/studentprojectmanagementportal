@@ -2,11 +2,11 @@
 {% load static %}
 {% block content %}
 
-
-
-<br><br><br><br>
-
-<a href="/accounts/logout" style="color: red; align-items: right;" > (logout) </a>
+{% if project.id %}
+{% include 'students/navbar.html' %}
+{% endif%}
+<br><br>
+<a   class="btn btn-outline-danger" href="/accounts/logout" style="color: red; align-items: right;" > logout </a> <br><br>
 
 <div class="card rounded-top border border-1 p-3">
 
@@ -30,16 +30,18 @@
   
       {% if project.id %}
       <p style="color: Blue ;" class="text-center">Project Status: {{project.status}}</p>
+      {% else %}
+      <p style="color: red;" class="text-center" > NO SUPERVISOR YET</p>
       {% endif %}
 
-
+    
   <div class="card-body">
+    {% if project.id %}
     <div class="text-center">
       <img src="/media/{{project.student.user.profile_pix}}" class="rounded-circle z-depth-2" alt="" height="200px" width="200px">
     </div>
     <br><br> <img height="50px" src="{% static 'img/folder.svg' %}" alt="title">
-    <h5 class="card-title">Project Topic: {{ project }}</h5>
-    {% if project.id %}
+    <h5 class="card-title">Project Topic: {{ project }}</h5>    
     <p class="lead">Full name: {{ project.student.user.first_name }}&nbsp; {{ project.student.user.last_name }}
      <br> Institution: {{ project.student.user.institution }}
      <br> Department: {{ project.student.user.department }}
@@ -62,11 +64,16 @@
     
 
 <br><br><br><br><br><br>    
-<h3 class="text-center" >Uploaded Projects <br><br> 
-  <a href="{% url 'project_upload' %}" class="btn btn-success">Upload new project content</a>
+  
+{% if project.id %}
+  <h3 class="text-center" >Uploaded Projects <br><br>   
+    <a href="{% url 'project_upload' %}" class="btn btn-success">Upload new project content</a>
+  {% endif %}
+
 </h3>
+
 <br>
-<a href="#" id="uploadedprojects" ></a>
+<a href="#" id="uploadedprojects" ></a>{% if project_uploads %}
 <table class="table align-middle mb-0 bg-white">
   <thead class="bg-light">
     <tr>
@@ -75,7 +82,8 @@
     </tr>
   </thead>
   <tbody>
-    {% for i in project_uploads%}       
+    
+    {% for i in project_uploads %}       
     <tr>
       <td>
         <div class="d-flex align-items-center">
@@ -112,7 +120,7 @@
      
     </tr>
     {% endfor %}
-    
+  {% endif  %}
   </tbody>
 </table>
 

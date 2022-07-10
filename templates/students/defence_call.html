@@ -2,6 +2,32 @@
 {% load static %}
 {% block content %}
 
+{% include 'students/navbar.html' %}
+<style>
+   input {
+  width: 100%;
+  padding: 12px 20px;
+  box-sizing: border-box;
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  background-color: #f8f8f8;
+  font-size: 16px;
+  height: 80px;
+}
+
+select {
+  width: 100%;
+  padding: 12px 20px;
+  box-sizing: border-box;
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  background-color: #f8f8f8;
+  font-size: 16px;
+  height: 50px;
+}
+
+
+</style>
 
 <div class="card">
   <div class="card-body">
@@ -69,16 +95,16 @@
   <div>
     <div class="card text-center">
       <div class="card-body">
-        <form action="{% url 'defence_call' %}" method="post">
+        <form  class="form-control" action="{% url 'defence_call' %}" method="post">
           {% csrf_token %}
           
           <br>
           <!-- <label class="text-left" >Defence call note to supervisor</label> -->
           <br>
-          <input class="form-control" type="text" name="detail" placeholder="describe your request for a proejct defence" />
+          <input  type="text" name="detail" placeholder="describe your request for a proejct defence" />
                    
-          <br>
-          <select  class="form-control" name="type" id="type" >
+          <br><br>
+          <select class="custom-select" name="type" id="type" >
             <option value=""> select type</option>
             <option value="mid_term">Mid-term Defence</option>
             <option value="final">Final Defence</option>             

@@ -21,7 +21,11 @@
     {% endblock %}
   </head>
   <body>
-    
+    <style>
+      body {
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+}
+    </style>
     
     {% comment %} <a href=""><img style="position: absolute; top: 0; right: 0; border: 0;" 
     src="https://camo.githubusercontent.com/38ef81f8aca64bb9a64448d0d70f1308ef5341ab/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67" 
@@ -56,37 +60,18 @@
                     Final Year Project Management Portal
                     {% if user.is_authenticated %}
                       {% if user.is_supervisor %}
+                      <br>
                         <span class="icon-feather" data-toggle="tooltip" data-placement="right" title="Teacher profile"></span>
                       {% else %}
+                      <br>
                         <span class="icon-graduation-cap" data-toggle="tooltip" data-placement="right" title="Student profile"></span>
                       {% endif %}
                     {% endif %}
                   </a>
                 </h1>
               </div>
-              {% if user.is_authenticated %}
-              {% if user.is_student %}
-              <nav class="navbar navbar-light bg-light">
-                <div class="container-fluid">
-                  <a class="navbar-brand" href="#">
-                    <span class="icon-graduation-cap" data-toggle="tooltip" data-placement="right" title="Student profile"></span>
-                    FYP Portal
-                  </a>
-                  <ul class="nav nav-tabs mb-3">
-                    <li class="nav-item">
-                      <a class="nav-link" href="{% url 'view_messages' %}">Message</a>
-                    </li>
-                    <li class="nav-item">
-                      <a class="nav-link" href="{% url 'defence_call_list' %}">Defence call</a>
-                    </li>
-                    <li class="nav-item">
-                      <a class="nav-link" href="{% url 'meeting_list' %}">Meeting</a>
-                    </li>
-                  </ul>
-                </div>
-              </nav>
-              {% endif %}
-              {% endif %}
+             
+              
 
               {% if user.is_authenticated %}
               {% if user.is_supervisor %}

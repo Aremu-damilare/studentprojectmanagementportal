@@ -1,5 +1,5 @@
 import imp
-from .models import ProjectComment, MeetingComment
+from .models import ProjectComment, MeetingComment, Supervisor
 from django.forms import ModelForm
 from django.core.exceptions import ValidationError
 
@@ -57,4 +57,32 @@ class StudentSignUpForm(UserCreationForm):
         user.is_student = True
         user.save()
         student = Student.objects.create(user=user)        
+        return user
+
+
+class SupervisorSignUpForm(UserCreationForm):
+    first_name = forms.CharField(max_length=30, required=False, help_text='Optional.')
+    last_name = forms.CharField(max_length=30, required=False, help_text='Optional.')
+    email = forms.EmailField(max_length=254, help_text='Required. Inform a valid email address.')
+    
+   
+
+    class Meta(UserCreationForm.Meta):
+        model = User
+        fields = ('username', 'first_name', 'last_name', 'email', 'password1', 'password2', 
+        'department', 'institution', 'profile_pix', 'state_of_origin'
+        )
+    #     date_of_birth=forms.DateTimeField(
+    #     input_formats=['%d/%m/%Y %H:%M'],
+    #     widget=forms.DateTimeInput(attrs={
+    #         'class': 'form-control datetimepicker-input',
+    #         'data-target': '#datetimepicker1'
+    #     })
+    # )
+    @transaction.atomic
+    def save(self):
+        user = super().save(commit=False)
+        user.is_supervisor = True
+        user.save()
+        supervisor = Supervisor.objects.create(user=user)        
         return user

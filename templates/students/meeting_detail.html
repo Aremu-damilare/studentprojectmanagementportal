@@ -3,6 +3,7 @@
 
 {% block content %}
 {% load static %}
+{% include 'students/navbar.html' %}
   <style>
     .form-control{
       width: auto;
@@ -45,8 +46,8 @@
   
   
     <div class="rounded-top border border-1 p-3" >
-      <img height="50px" src="{% static 'img/list.svg' %}" alt="title"> &nbsp;
-      <small>Meeting minutes from project student</small>
+      
+      
         {% for comment in comments %}                
       <div class="rounded border border-1 p-2 m-3" style="background-color: rgb(255, 255, 255);">
       <!--       

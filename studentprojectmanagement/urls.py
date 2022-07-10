@@ -18,6 +18,7 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from studentSupervisor.views import views
+from studentSupervisor.views import supervisor
 
 
 urlpatterns = [
@@ -25,6 +26,7 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
     path('', include('studentSupervisor.urls')),
     path('accounts/signup/', views.StudentSignUpView.as_view(), name='signup'),
+    path('supervisor/accounts/signup/', supervisor.SupervisorSignUpView.as_view(), name='signup_supervisor'),
 ]
 
 if settings.DEBUG:

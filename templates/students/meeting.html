@@ -1,17 +1,42 @@
 {% extends 'base.html' %}
 {% block content %}
-<style>
-  .form-control{
-    width: auto;
-  }
+
+  <style>
+    label {
+  color: black;
+  padding: 8px;
+  background-color: #e7e7e7; color: black;
+}
+  input {
+  width: 100%;
+  padding: 12px 20px;
+  box-sizing: border-box;
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  background-color: #f8f8f8;
+  font-size: 16px;
+}
+
+  textarea {
+  width: 100%;
+  height: 150px;
+  padding: 12px 20px;
+  box-sizing: border-box;
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  background-color: #f8f8f8;
+  font-size: 16px;
+  resize: none;
+}
+
 </style>
 
-
+{% include 'students/navbar.html' %}
 <div class="card">
   <div class="card-body">
     <h5 class="card-title"> Student Meeting </h5>    
-    <br><br>
-    <h4> Recent Meetings and Status</h4>
+    <br>
+    <!-- <h4> Recent Meetings and Status</h4> -->
   
     {% for i in object_list %}
       <span>
@@ -27,8 +52,8 @@
 </div>
 
 <br>
-<div class="rounded-top border border-1 p-3 text-center">
-  <div class="rounded border border-3 p-3" style="background-color: rgba(180, 164, 164, 0.808);">
+<div class="rounded-top border border-1  text-center">
+  <div class="rounded border border-3" style="background-color: rgba(180, 164, 164, 0.808);">
     <h3> Student-Supervisor Meeting Schedule</h3>
 
         <!-- <a href="{% url 'defence_call' %}"> Create Message</a>       -->

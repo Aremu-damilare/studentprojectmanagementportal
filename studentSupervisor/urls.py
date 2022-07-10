@@ -16,6 +16,8 @@ from .views.supervisor import StudentList , PostDetailView as PDVSupervisor, \
         StudentDefenceCallView as SDCallView, StudentProjectUpload as SProjectUpload, \
             SupervisorMeetingList, SupervisorMeetingDetailView, SupervisorMeetingUpdate, \
                 ProjectUpdate, ReadTrueSupervisor
+
+                
 urlpatterns = [
     path('', StudentProject.as_view(), name='home'),  
     path('project/upload/', StudentProjectUpload.as_view(), name='project_upload'),

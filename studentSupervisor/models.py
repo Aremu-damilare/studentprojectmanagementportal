@@ -1,6 +1,5 @@
 from datetime import datetime
-import profile
-from turtle import title
+# import profile
 import uuid
 from django.contrib.auth.models import AbstractUser
 from django.db import models
@@ -31,15 +30,13 @@ class User(AbstractUser):
 
 
 class Student(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True,  related_name='student')
-    
-     
+    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True,  related_name='student')         
     def __str__(self):
         return self.user.username
 
+
 class Supervisor(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True,  related_name='supervisor')    
-     
+    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True,  related_name='supervisor')         
     def __str__(self):
         return self.user.username
 
@@ -59,32 +56,32 @@ class ProjectMessage(models.Model):
 
 
 class Project(models.Model):
-    PROJECT_STATUS = (
+    PROJECT_STATUS = (        
        ("ongoing", "ongoing"),
        ("completed", "completed"),
-       ("closed", "closed")
+       ("paused", "paused"),       
     )
     
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    title =  models.CharField(max_length=150, blank=True, null=True)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)    
     # detail =  models.TextField(max_length=200, blank=True, null=True)
     status = models.CharField(choices=PROJECT_STATUS, default="ongoing", max_length=255, blank=True, null=True)
     supervisor  =  models.ForeignKey(Supervisor, on_delete=models.DO_NOTHING, blank=True, null=True)
     student  =   models.OneToOneField(Student, on_delete=models.DO_NOTHING, blank=True, null=True)
 
     def __str__(self):
-        return self.title
+        return f'project for {self.supervisor} + {self.student}'
 
     # def clean(self):
-    #     student = Project.objects.filter(student=self.student).exists()
+    #     student = Project.objects.filter(status='ongoing').exists()
     #     if student:
     #         raise ValidationError(
-    #             {'student': 'student already has to a project'}
+    #             {'student': 'student already has to a ongoing'}
     #         )
 
 def user_directory_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT/user_<id>/<filename>
     return 'project_uploads/_{0}/{1}'.format(instance.student_id, filename)
+
 
 class ProjectUplaod(models.Model):
     

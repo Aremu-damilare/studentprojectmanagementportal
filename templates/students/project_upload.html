@@ -2,6 +2,31 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
+{% include 'students/navbar.html' %}
+<style>
+  input {
+  width: 100%;
+  padding: 12px 20px;
+  box-sizing: border-box;
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  background-color: #f8f8f8;
+  font-size: 16px;
+}
+
+  textarea {
+  width: 100%;
+  height: 150px;
+  padding: 12px 20px;
+  box-sizing: border-box;
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  background-color: #f8f8f8;
+  font-size: 16px;
+  resize: none;
+}
+</style>
+</style>
 <div class="card">
   <div class="card-body">
     <h5 class="card-title"> Upload your project content and file </h5>    
@@ -13,7 +38,7 @@
   <br><br><br>
   <div class="rounded border border-3 p-3" style="background-color: rgba(241, 236, 236, 0.89);">
     <div class="col-md-6 col-sm-8 col-12">
-      <form class="" method="post"  enctype="multipart/form-data" >
+      <form class="form-control" method="post"  enctype="multipart/form-data" >
         {% csrf_token %}
         {{ form|crispy }}
         <br>
