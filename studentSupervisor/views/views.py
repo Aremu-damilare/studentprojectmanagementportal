@@ -59,7 +59,7 @@ class ReadTrue(UpdateView):
         form.student_read = True      
         # form.supervisor = supervisor           
         form.save()
-        messages.success(self.request, 'The call was created with success!.')
+        messages.success(self.request, 'Notification mark as read successfully')
         # notice = ModelNotifications.objects.create(student=student, supervisor=supervisor, notice=f"project updated on <a href=\'/project/upload/{pk}\'>view</a>",
         # supervisor_read=True
         # )
@@ -88,11 +88,11 @@ class StudentProjectUpload(CreateView):
         # quiz.status = form.HiddenInput()
         status = ProjectUplaod.objects.filter(status='pending', project_id=project_id)
         if status.exists():
-            messages.error(self.request, 'The uplaod was created with Error! Pending  project upload exists')
+            messages.error(self.request, 'Your project uplaod failed! Pending project upload exists.')
             return redirect(self.request.META.get('HTTP_REFERER', 'redirect_if_referer_not_found'))
         else:
             quiz.save()
-            messages.success(self.request, 'The uplaod was created with success!.')
+            messages.success(self.request, 'The project uplaod was created successfully.')
             notice = ModelNotifications.objects.create(student=student, 
             supervisor=supervisor, notice=f"Project was uploaded by <b>{student}</b> ",
             supervisor_read=False, student_read=True) 
@@ -214,8 +214,9 @@ class PostComment(SingleObjectMixin, FormView):
         student = post.student
         supervisor = post.supervisor
         # print("student", student)
+        messages.success(self.request, 'Comment posted successfully!')
         notice = ModelNotifications.objects.create(student=student, 
-        supervisor=supervisor, notice=f"project comment from {student} on <a href=\'supervisor/project/upload/{pk}\'>view</a>",
+        supervisor=supervisor, notice=f"project comment from {student} on <a href=\'/supervisor/project/upload/{pk}\'>view</a>",
         supervisor_read=False, student_read=True)     
         return reverse('project_upload_detail', kwargs={'pk': post.pk})
 
@@ -304,7 +305,7 @@ class StudentDefenceCall(CreateView):
         form.supervisor = supervisor 
         form.student_read = True      
         form.save()
-        messages.success(self.request, 'The call was created with success!.')
+        messages.success(self.request, 'Defence request sent successfully!')
         notice = ModelNotifications.objects.create(student=student, 
         supervisor=supervisor, notice=f"A Defence schedule was requested by {student} <a href=\'defence/call/student_id={student_id}/\'>view</a>",
         supervisor_read=False, student_read=True) 
@@ -346,7 +347,7 @@ class StudentMeetingCreate(CreateView):
         form.supervisor = supervisor 
         form.student_read = True      
         form.save()
-        messages.success(self.request, 'The Meeting was created with success!.')
+        messages.success(self.request, 'The Meeting schedule was created successfully!')
         notice = ModelNotifications.objects.create(student=student, 
         supervisor=supervisor, notice=f"A Meeting schedule was set up by {student} <a href=\'meeting/list/student_id={student_id}/\'>view</a>",
         supervisor_read=False, student_read=True) 

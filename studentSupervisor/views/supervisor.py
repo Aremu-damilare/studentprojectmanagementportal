@@ -36,7 +36,7 @@ class ReadTrueSupervisor(UpdateView):
         form.supervisor_read = True      
         # form.supervisor = supervisor           
         form.save()
-        messages.success(self.request, 'The call was created with success!.')
+        messages.success(self.request, 'Notifcation mark as Read')
         # notice = ModelNotifications.objects.create(student=student, supervisor=supervisor, notice=f"project updated on <a href=\'/project/upload/{pk}\'>view</a>",
         # supervisor_read=True
         # )
@@ -127,7 +127,7 @@ class ProjectUpdate(UpdateView):
         form.student = student        
         form.supervisor = supervisor           
         form.save()
-        messages.success(self.request, 'The call was created with success!.')
+        messages.success(self.request, 'Project status was updated successfully')
         notice = ModelNotifications.objects.create(student=student, supervisor=supervisor, notice=f"project status updated. <a href=\'/project/upload/{pk}\'>view</a>",
         supervisor_read=True
         )
@@ -199,6 +199,7 @@ class PostComment(SingleObjectMixin, FormView):
         student = post.student
         supervisor = post.supervisor
         # print("student", student)
+        messages.success(self.request, 'Project comment posted successfully')
         notice = ModelNotifications.objects.create(student=student, 
         supervisor=supervisor, notice=f"project comment from supervisor on <a href=\'/project/upload/{pk}\'>view</a>",
         supervisor_read=True)     
@@ -304,7 +305,7 @@ class StudentDefenceCall(UpdateView):
         form.supervisor = supervisor 
         form.supervisor_read = True      
         form.save()
-        messages.success(self.request, 'The call was created with success!.')
+        messages.success(self.request, 'The defence rquest status was updated successfully')
         notice = ModelNotifications.objects.create(student=student, 
         supervisor=supervisor, notice=f"Defence call request was reviewed by your supervisor  <a href=\'defence/call/\'>view</a>",
         supervisor_read=True) 
@@ -434,6 +435,7 @@ class MeetingComment(SingleObjectMixin, FormView):
         # notice = ModelNotifications.objects.create(student=student, 
         # supervisor=supervisor, notice=f"Meeting schedule was reviewd <a href=\'/meeting/{pk}\'>view</a>",
         # supervisor_read=True) 
+        messages.success(self.request, 'Meeting comment status updated successfully')
         return reverse('meeting_detail_supervisor', kwargs={'pk': post.pk})
 
 
@@ -470,7 +472,7 @@ class SupervisorMeetingUpdate(UpdateView):
         form.user = user 
         # form.verification_status = True      
         form.save()
-        messages.success(self.request, 'The call was created with success!.')
+        messages.success(self.request, 'Meeting review was updated successfully!')
 
              
         pk = self.kwargs['pk']          

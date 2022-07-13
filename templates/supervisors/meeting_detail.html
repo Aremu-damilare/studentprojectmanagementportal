@@ -21,10 +21,19 @@
       </div>
        
   </div>
-  
+  {% for message in messages %}
+  <div class="container-fluid p-0">
+    <div class="alert {{ message.tags }} alert-dismissible" role="alert" >
+      <button onClick="window.location.href=window.location.href" type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="True">&times;</span>
+      </button>
+      {{ message }}
+    </div>
+  </div>
+  {% endfor %}
     <div class="rounded-top border border-1 p-3" >
       <img height="50px" src="{% static 'img/list.svg' %}" alt="title"> &nbsp;
-      <small>Meeting minutes from project student</small>
+      <small>Meeting minutes from project student</small> <br><br>
         {% for comment in comments %}
           
       <div class="rounded border border-1 p-3" style="background-color: rgba(228, 205, 205, 0.808);">
@@ -78,19 +87,6 @@
     {% endfor %}
 
   </div>
-
-<!-- 
-    <form method="post" action="{% url 'project_upload_detail_supervisor' object.pk %}">
-        {% csrf_token %}
-        {{ form|crispy }}
-        <button type="submit" class="btn btn-success"> send </button>
-        
-        {% for message in messages %}
-        <li class="{{ message.tags }}">
-        {{ message }}
-        </li>
-        {% endfor %}
-      </form> -->
 
 
   

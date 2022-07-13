@@ -4,17 +4,41 @@
 {% block content %}
 {% load static %}
 {% include 'students/navbar.html' %}
-  <style>
-    .form-control{
-      width: auto;
-    }
-  </style>
+<style>
+  
+  label {
+  color: black;
+  padding: 8px;
+  background-color: #e7e7e7; color: black;
+}
 
+textarea {
+  width: 100%;
+  height: 150px;
+  padding: 12px 20px;
+  box-sizing: border-box;
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  background-color: #f8f8f8;
+  font-size: 16px;
+  resize: none;
+
+}
+</style>
   
   
   <div class="p-4 shadow-4 rounded-3" >
     <div class="rounded-top border border-1 p-3">             
-      
+      {% for message in messages %}
+      <div class="container-fluid p-0">
+        <div class="alert {{ message.tags }} alert-dismissible" role="alert" >
+          <button onClick="window.location.href=window.location.href" type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="True">&times;</span>
+          </button>
+          {{ message }}
+        </div>
+      </div>
+      {% endfor %}
       <div class="rounded border p-2">
       <br>
       <h3><img height="50px" src="{% static 'img/smartphone.svg' %}" alt="title"> {{ object.title }}</h3> 
@@ -81,11 +105,7 @@
       {{ form|crispy }}
       <button type="submit" class="btn btn-success"> send </button>
       <a href="" class="btn btn-outline-secondary" role="button">Nevermind</a>
-      {% for message in messages %}
-      <li class="{{ message.tags }}">
-      {{ message }}
-      </li>
-      {% endfor %}
+     
     </form>
   </div>
 

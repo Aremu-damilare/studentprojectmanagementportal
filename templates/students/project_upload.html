@@ -4,6 +4,12 @@
 {% block content %}
 {% include 'students/navbar.html' %}
 <style>
+   label {
+  color: black;
+  padding: 8px;
+  background-color: #e7e7e7; color: black;
+}
+
   input {
   width: 100%;
   padding: 12px 20px;
@@ -34,6 +40,16 @@
   </div>
 </div> 
 <br><br>
+{% for message in messages %}
+<div class="container-fluid p-0">
+  <div class="alert {{ message.tags }} alert-dismissible" role="alert" >
+    <button onClick="window.location.href=window.location.href" type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="True">&times;</span>
+    </button>
+    {{ message }}
+  </div>
+</div>
+{% endfor %}
 <small> *Your upload is automatically on 'pending' till your supervisor approves it or declines it.</small>    
   <br><br><br>
   <div class="rounded border border-3 p-3" style="background-color: rgba(241, 236, 236, 0.89);">
@@ -44,11 +60,7 @@
         <br>
         <button type="submit" class="btn btn-success">Save</button>
         <a href="" class="btn btn-outline-secondary" role="button">Nevermind</a>
-        {% for message in messages %}
-        <li class="{{ message.tags }}">
-        {{ message }}
-        </li>
-        {% endfor %}
+        
       </form>
     </div>
   </div>
