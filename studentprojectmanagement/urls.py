@@ -19,10 +19,15 @@ from django.conf import settings
 from django.conf.urls.static import static
 from studentSupervisor.views import views
 from studentSupervisor.views import supervisor
-
+import ckeditor_uploader
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.cache import never_cache
+from ckeditor_uploader import views as ckeditor_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('ckeditor/upload/', login_required(ckeditor_views.upload), name='ckeditor_upload'),
+    path('ckeditor/browse/', never_cache(login_required(ckeditor_views.browse)), name='ckeditor_browse'),
     path('accounts/', include('django.contrib.auth.urls')),
     path('', include('studentSupervisor.urls')),
     path('accounts/signup/', views.StudentSignUpView.as_view(), name='signup'),

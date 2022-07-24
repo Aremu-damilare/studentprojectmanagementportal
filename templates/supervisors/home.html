@@ -10,18 +10,31 @@
 }
 </style>
 
+<script>
+  function show(id) {   
+    div = document.getElementById(id)
+    if (div.style.display==='none'){
+      div.style.display = "block"
+    } else {
+      div.style.display = "none"
+    }
+    
+
+  }
+</script>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<script>
+
+<!-- <script>
 $(document).ready(function(){
-  $(".btn1").click(function(){
-    $(".profile").hide();
+  $("#profile").click(function(){
+    // $("#profile").hide();
   });
-  $(".btn2").click(function(){
-    $(".profile").show();
+  $(".student-widget").click(function(){
+    $(".profile").toggle();
   });
 });
-</script>
+</script> -->
 
 <!-- <br><br><br><br>
 <div class="card text-center">
@@ -63,54 +76,53 @@ $(document).ready(function(){
 <table class="table align-middle mb-0 bg-white">
   <thead class="bg-light">
     <tr>
-      <th>Title</th>     
+      <th>Students Projects Details</th>     
     </tr>
   </thead>
   <tbody>
     {% for i in project_uploads %}       
     <tr>
       <td>
-        <div class="d-flex align-items-center">
-          <img
-              src="/media/{{i.student.user.profile_pix}}"
-              alt=""
-              style="width: 45px; height: 45px"
-              class="rounded-circle"
-              />
+        <div class="d-flex align-items-center">          
+          <div class="ms-3 text-center">     
+            <img src="/media/{{i.student.user.profile_pix}}" alt="" style="width: 65px; height: 65px" class="rounded-circle"/> &nbsp; &nbsp;        
+            <a onclick="show('{{i.student}}')"  role="button" id="student-widget" href="javascript:;" class="btn btn-success student-widget"> {{i.student}}</a> 
+                <br><br>                   
 
-          <div class="ms-3">
-            <p class="fw-bold mb-1"><a href="#" class=" btn2"> {{i.student}}</a>   {{i.status}} </p>
-            <a role="button"  class="btn btn-success btn-sm" href="{%  url 'view_messages_supervisor' i.student_id %}"> message </a> 
-            <br><br>
-            <p  class="border border-1 p-3 profile"> 
-              First name: {{i.student.user.first_name}}<br>
-              Last name: {{i.student.user.last_name}}<br>
-              Institution: {{i.student.user.institution}}<br>
-              state_of_origin: {{i.student.user.state_of_origin}} <br>
-              date_of_birth: {{i.student.user.date_of_birth}} <br>
-              department: {{i.student.user.department}} <br>
-              Institution: {{i.student.user.institution}} <br>            
+            <div id="{{i.student}}" class="border border-1 p-3 profile"  style="display: none; text-align: left;"  >       
+              <h5>{{i.title}}</h5>    
+              <h6></h6><i>Status: {{i.status}} </i>                  
 
+                  <form action="{% url 'project_title_update_supervisor' i.pk %}" method="post">
+                    {% csrf_token %}                                                  
+                    <input type="hidden" name="student_id" value="{{i.student.user.id}}">
+                    <br><label for="status"> Project status update </label> <br>
+                    <input onclick="this.form.submit()"  type="radio" name="status" value="ongoing" /> Ongoing<br>
+                    <input onclick="this.form.submit()"  type="radio" name="status" value="completed"/> Completed <br>
+                    <input onclick="this.form.submit()"  type="radio" name="status" value="approved"/> Approve <br>
+                    <input onclick="this.form.submit()" type="radio" name="status" value="disapproved"/> Disapprove <br>                    
+                  </form>      
 
-            <a style="color: red;" class="btn1"> Close </a>
-            </p>
-
-            
-            <!-- <a class="">Show</a> -->
-
-            <p class="text-muted mb-0">{{i.title}}</p>
-            
-            <p class="text-muted">
-
+                <br>
+                <a role="button"  class="btn btn-success btn-sm" href="{%  url 'view_messages_supervisor' i.student_id %}"> message </a>  <br><br>
+                First name: {{i.student.user.first_name}}<br>
+                Last name: {{i.student.user.last_name}}<br>
+                Institution: {{i.student.user.institution}}<br>                
+                Date of birth: {{i.student.user.date_of_birth}} <br>
+                Department: {{i.student.user.department}} <br>
+                Institution: {{i.student.user.institution}} <br> <br>
                 
                 <a  class="btn btn-secondary" href="{%  url 'defence_call_list_supervisor' i.student_id %}"> Defence </a> 
                 <a  class="btn btn-secondary" href="{%  url 'project_upload_list_supervisor' i.student_id %}"> Project </a>
                 <a  class="btn btn-secondary" href="{%  url 'supervisor_meeting_list' i.student_id %}">  Meeting </a>
-                
+
+            </div>
+
+            <!-- <a class="">Show</a> -->
+
             </p>
           </div>
-        </div>              
-        <!-- <p class="text-muted mb-0">IT department</p> -->
+        </div>                     
       </td>
      
     </tr>

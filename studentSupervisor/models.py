@@ -17,13 +17,11 @@ well as their actions
 def profile_directory_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT/user_<id>/<filename>
     return 'profile_uploads/_{0}/{1}'.format(instance, filename)
-
-
+    
 class User(AbstractUser):
+    email = models.EmailField(unique=True)
     is_student = models.BooleanField(default=False)
-    is_supervisor = models.BooleanField(default=False)
-    state_of_origin = models.CharField(max_length=30, blank=True)
-    date_of_birth = models.DateField(null=True, blank=True)
+    is_supervisor = models.BooleanField(default=False)   
     institution = models.CharField(max_length=30, blank=True)
     department = models.CharField(max_length=30, blank=True)
     profile_pix = models.FileField(upload_to=profile_directory_path, blank=True, null=True)
@@ -59,29 +57,32 @@ class Project(models.Model):
     PROJECT_STATUS = (        
        ("ongoing", "ongoing"),
        ("completed", "completed"),
-       ("paused", "paused"),       
+       ("approved", "approved"),       
+       ("disapproved", "disapproved"),  
     )
     
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)    
     # detail =  models.TextField(max_length=200, blank=True, null=True)
-    status = models.CharField(choices=PROJECT_STATUS, default="ongoing", max_length=255, blank=True, null=True)
+    topic =  models.CharField(max_length=250, null=True, unique=True, blank=True)
+    status = models.CharField(choices=PROJECT_STATUS, default="disapproved", max_length=255, blank=True, null=True)
     supervisor  =  models.ForeignKey(Supervisor, on_delete=models.DO_NOTHING, blank=True, null=True)
     student  =   models.OneToOneField(Student, on_delete=models.DO_NOTHING, blank=True, null=True)
 
     def __str__(self):
-        return f'project for {self.supervisor} + {self.student}'
+        return f'project for {self.supervisor} + {self.student} + {self.topic}'
 
     # def clean(self):
-    #     student = Project.objects.filter(status='ongoing').exists()
-    #     if student:
+    #     topic = Project.objects.filter(topic=self.topic).exists()
+    #     if topic:
     #         raise ValidationError(
-    #             {'student': 'student already has to a ongoing'}
-    #         )
+    #             {'topic': 'Project topic has been choosen already'})
 
 def user_directory_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT/user_<id>/<filename>
     return 'project_uploads/_{0}/{1}'.format(instance.student_id, filename)
 
+
+from ckeditor_uploader.fields import RichTextUploadingField
 
 class ProjectUplaod(models.Model):
     
@@ -93,8 +94,9 @@ class ProjectUplaod(models.Model):
 
     supervisor = models.ForeignKey(Supervisor, on_delete=models.DO_NOTHING, blank=True, null=True)
     student = models.ForeignKey(Student, on_delete=models.DO_NOTHING, blank=True, null=True)
-    title =  models.CharField(max_length=150, null=True)
-    detail =  models.TextField(max_length=50000, null=True)
+    title =  models.CharField(max_length=150, null=True, unique=False)
+    detail =  RichTextUploadingField(null=True)
+    grade = models.IntegerField(null=True, blank=True, default=0)
     file = models.FileField(upload_to=user_directory_path, blank=True, null=True, max_length=500)
     file2 = models.FileField(upload_to=user_directory_path, blank=True, null=True, max_length=500)
     project_id  =  models.ForeignKey(Project, on_delete=models.DO_NOTHING,  null=True)

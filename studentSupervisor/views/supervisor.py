@@ -44,6 +44,87 @@ class ReadTrueSupervisor(UpdateView):
         return redirect(self.request.META.get('HTTP_REFERER', 'redirect_if_referer_not_found'))
 
 
+
+
+@method_decorator([login_required, supervisor_required], name='dispatch')
+class ProjectUploadContentDetailview(DetailView):
+    model = ProjectUplaod
+    template_name = 'supervisors/project_upload_content_detail.html'
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(ProjectUploadContentDetailview, self).get_context_data(*args, **kwargs)        
+        user = self.request.user  
+        if user.is_superuser:
+            project = Project.objects.all()
+        else:
+            # student = Student.objects.get(user=user)   
+            # project_id = Project.objects.get(student=student)
+            project = ProjectUplaod.objects.filter(pk=self.kwargs['pk'])
+            # print(project)
+            # project = None       
+        context["project"] = project       
+        return context  
+
+
+
+
+
+@method_decorator([login_required, supervisor_required], name='dispatch')
+class ProjectTitleStatusUpdate(UpdateView):
+    # specify the model you want to use
+    model = Project
+    template_name = 'supervisors/home.html'
+  
+    # specify the fields
+    fields = [ "status" , ]
+    
+    def form_valid(self, form):
+        student_id = self.request.POST.get('student_id', '')
+        # url = self.request.build_absolute_uri()        
+        student = Student.objects.get(user=student_id)                
+        user = self.request.user        
+        supervisor = Supervisor.objects.get(user=user)
+        form = form.save(commit=False)
+        form.student = student        
+        form.supervisor = supervisor           
+        form.save()
+        messages.success(self.request, 'Project title status was updated successfully')
+        notice = ModelNotifications.objects.create(student=student, supervisor=supervisor, notice=f"project title status was edited by {user}",        
+        )        
+        return redirect(self.request.META.get('HTTP_REFERER', 'redirect_if_referer_not_found'))
+
+
+
+
+@method_decorator([login_required, supervisor_required], name='dispatch')
+class ProjectContentUpdate(UpdateView):
+    # specify the model you want to use
+    model = ProjectUplaod
+    template_name = 'supervisors/project_upload_update.html'
+  
+    # specify the fields
+    fields = [ "detail"  ]
+    
+    def form_valid(self, form):
+        student_id = self.request.GET.get('student_id', '')
+        # url = self.request.build_absolute_uri()
+        pk = self.kwargs['pk']
+        student = Student.objects.get(user=student_id)                
+        user = self.request.user        
+        supervisor = Supervisor.objects.get(user=user)
+        form = form.save(commit=False)
+        form.student = student        
+        form.supervisor = supervisor           
+        form.save()
+        messages.success(self.request, 'Project status was edited successfully')
+        notice = ModelNotifications.objects.create(student=student, supervisor=supervisor, notice=f"project content edited. <a href=\'/project/upload/{pk}\'>view</a>",
+        supervisor_read=True
+        )        
+        return redirect("/supervisor/project/upload/"+pk)    
+
+
+
+
 # A listView to return lists of students for the logged in supervisor
 # its has a 'notice' dictionary to display notifications on the 
 # template_name using keyword 'notice'
@@ -74,6 +155,8 @@ class StudentList(ListView):
         context['notice'] = notice                         
         return context  
  
+
+
 
 # displays list of all students uploads for the logged in supervisor
 # the specific student is gotten by using kwags['student_id'] which is the student id
@@ -107,12 +190,13 @@ class StudentProjectUpload(ListView):
 
 
 
+
 # Supervisor updates proejct status by firing this view through the url
 # and the student is notified by creating a notification for the student
 @method_decorator([login_required, supervisor_required], name='dispatch')
 class ProjectUpdate(UpdateView):
     model = ProjectUplaod
-    fields = ('status',  )
+    fields = ('status', 'grade' )
     template_name = 'supervisors/project_upload_datail.html'
 
     def form_valid(self, form):
@@ -133,6 +217,7 @@ class ProjectUpdate(UpdateView):
         )
         # print('urll', self.request.build_absolute_uri())
         return redirect(self.request.META.get('HTTP_REFERER', 'redirect_if_referer_not_found'))
+
 
 
 

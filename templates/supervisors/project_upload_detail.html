@@ -27,11 +27,8 @@ textarea {
 }
 </style>
 
-
-
-
   <div class="" >
-    <div class="rounded-top border border-1 p-3 text-center" >
+    <div class="rounded-top border border-1 p-3 text-center">
       {% for message in messages %}
       <div class="container-fluid p-0">
         <div class="alert {{ message.tags }} alert-dismissible" role="alert" >
@@ -44,13 +41,15 @@ textarea {
       {% endfor %}
       
         <h1>
+           <u>
             {{ object.title }}
+           </u> 
         </h1> <br>
         <p>
-            {{ object.detail }}
+            {{ object.detail | truncatewords_html:200 | safe  }}
         </p>
         
-        {% if object.file %}
+        <!-- {% if object.file %}
         <p>
          Document: <a href="{{object.file.url }}">{{ object.file }}</a>
         </p>
@@ -60,8 +59,29 @@ textarea {
         <p>
           Document: <a href="{{object.file2.url }}"> {{ object.file2 }}</a> 
         </p>
-        {% endif %}
+        {% endif %} -->
+        
+        <a role="button" class="btn btn-primary btn-sm" href="{% url 'update_project_content' object.pk %}?student_id={{object.student.user.id}}"> update </a> |
 
+        <a role="button"  class="btn btn-primary btn-sm" href="{% url 'project_upload_content_detail_supervisor' object.pk %}"> view full </a>
+
+        <div class="rounded-top border border-1 p-4 m-4 text-center" >
+          
+          <form action="{% url 'project_update' object.pk %}" method="post">
+                        {% csrf_token %} 
+            <label for="customRange3" class="form-label">Student Grade </label>
+                  <p>Value: <span id="gradevalue"></span></p>
+                    {% if grade == 0  %}
+                  <input name="grade" type="range" class="form-range" min="0" max="100" id="grade" value="0">
+                        {% else %}
+                  <input name="grade" type="range" class="form-range" min="0" max="100" id="grade" value="{{object.grade}}">
+                    {% endif %}           
+
+            <input type="hidden" name="student_id" value="{{object.student.user.id}}">
+            <button type="submit" class="btn btn-success"> save grade </button>
+          </form>
+        </div>
+        
 
         {% if object.status == 'approved' %}
         <small> <img height="20px" src="{% static 'img/verified.svg' %}" alt="vverified"> {{ object.status }}</small>
@@ -70,20 +90,19 @@ textarea {
           <input type="hidden" name="student_id" value="{{object.student.user.id}}">
           <select onclick="this.form.submit()"  class="form-control" name="status" class="form-select" aria-label="Default select example" >                
             <!-- <option value="approved">approved</option>  -->
-            <option value="declined">decline</option> 
-            <option value="pedning">pending</option>                         
+            <option value="declined">Decline</option> 
+            <!-- <option value="pedning">pending</option>                          -->
           </select>              
         </form>
         {% endif %}
 
         {% if object.status == 'pending' %}
         <small> <img height="20px" src="{% static 'img/unverified.svg' %}" alt="vverified"> {{ object.status }}</small>
-        <form action="{% url 'project_update' object.pk %}" method="post">
+        <form   action="{% url 'project_update' object.pk %}" method="post">
           {% csrf_token %}                                                  
-          <input type="hidden" name="student_id" value="{{object.student.user.id}}">
-          <select onclick="this.form.submit()"  class="form-control" name="status" class="form-select" aria-label="Default select example" >                
-            <option value="approved">approve</option> 
-            <option value="declined">decline</option> 
+          <input type="hidden" name="student_id" value="{{object.student.user.id}}">   <br>                   
+            <input onclick="this.form.submit()" type="radio" name="status" value="approved" /> Approve<br>
+            <input onclick="this.form.submit()" type="radio" name="status" value="declined"/> Decline
             <!-- <option value="pedning">pending</option>                          -->
           </select>              
         </form>
@@ -95,9 +114,9 @@ textarea {
           {% csrf_token %}                                                  
           <input type="hidden" name="student_id" value="{{object.student.user.id}}">
           <select onclick="this.form.submit()"  class="form-control" name="status" class="form-select" aria-label="Default select example" >                
-            <option value="approved">approve</option> 
+            <option value="approved">Approve</option> 
             <!-- <option value="declined">declined</option>  -->
-            <option value="pedning">pending</option>                         
+            <!-- <option value="pedning">pending</option>                          -->
           </select>              
         </form>
         {% endif %}        
@@ -119,11 +138,9 @@ textarea {
         <br>
         <p > {{ comment.comment }}</p>
         <br><br>
-        <hr>
-    {% empty %}
-        <p>Feel free to leave the first comment!</p>
+        <hr>    
     {% endfor %}
-      <hr>
+        <br>
 
     <small> Write review or comment on student project</small>
     <form class="form-control" method="post" action="{% url 'project_upload_detail_supervisor' object.pk %}">
@@ -134,7 +151,15 @@ textarea {
        
       </form>
     </div>      
-
-
   </div>
+
+  <script>
+    var slider = document.getElementById("grade");
+    var output = document.getElementById("gradevalue");
+    output.innerHTML = slider.value;
+    
+    slider.oninput = function() {
+      output.innerHTML = this.value;
+    }
+    </script>
 {% endblock %}

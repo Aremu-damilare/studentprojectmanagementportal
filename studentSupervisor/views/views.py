@@ -1,3 +1,4 @@
+from unittest import result
 from django import views
 from django.shortcuts import render, get_object_or_404, redirect, render
 from django.contrib.auth import get_user_model
@@ -59,7 +60,7 @@ class ReadTrue(UpdateView):
         form.student_read = True      
         # form.supervisor = supervisor           
         form.save()
-        messages.success(self.request, 'Notification mark as read successfully')
+        # messages.success(self.request, 'Notification mark as read successfully')
         # notice = ModelNotifications.objects.create(student=student, supervisor=supervisor, notice=f"project updated on <a href=\'/project/upload/{pk}\'>view</a>",
         # supervisor_read=True
         # )
@@ -67,11 +68,106 @@ class ReadTrue(UpdateView):
         return redirect(self.request.META.get('HTTP_REFERER', 'redirect_if_referer_not_found'))
 
 
+
+
+
+
+class StudentProjectTitleUpdate(UpdateView):    
+    # specify the model you want to use
+    model = Project
+    template_name = 'students/home.html'
+  
+    # specify the fields
+    fields = [ "topic"  ]
+    
+    def form_valid(self, form):            
+        supervisor_id = self.request.POST.get('supervisor_id', '')
+        topic = self.request.POST.get('topic', '')
+        # url = self.request.build_absolute_uri()
+        # pk = self.kwargs['pk']
+        supervisor = Supervisor.objects.get(user=supervisor_id) 
+        user = self.request.user                       
+        student = Student.objects.get(user=user)                   
+        form = form.save(commit=False)
+        form.student = student      
+        form.supervisor = supervisor           
+        form.topic = topic
+        form.student_read = True
+        project = Project.objects.all()
+        
+        topic = project.filter(topic=topic).exists()        
+
+        if topic:
+            print("failll", topic)
+            messages.error(self.request, 'Project title could not be changed. A student with such topic exists')                    
+        else:                     
+            print("topic", topic)   
+            messages.success(self.request, 'Project title was edited successfully')
+            form.save()
+            notice = ModelNotifications.objects.create(student=student, supervisor=supervisor, notice=f"Project title edited by {user}",        
+        )                
+        return redirect('home')
+
+
+
+class StudentProjectUploadContentDetailView(DetailView):
+    model = ProjectUplaod
+    template_name = 'students/project_upload_content_detail.html'
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(StudentProjectUploadContentDetailView, self).get_context_data(*args, **kwargs)        
+        user = self.request.user  
+        if user.is_superuser:
+            project = Project.objects.all()
+        else:
+            student = Student.objects.get(user=user)   
+            project_id = Project.objects.get(student=student)
+            uploads = ProjectUplaod.objects.filter(project_id=project_id)
+            project = None
+
+        try:
+            project = Project.objects.get(student_id=student)
+            # supervisor = project.supervisor_id
+            # print("supervsss", supervisor)
+        except:
+            pass
+        context["project"] = project       
+        return context 
+
+
+class StudentProjectContentUpdate(UpdateView):
+    # specify the model you want to use
+    model = ProjectUplaod
+    template_name = 'students/project_upload_update.html'
+  
+    # specify the fields
+    fields = [ "detail"  ]
+    
+    def form_valid(self, form):
+        supervisor_id = self.request.GET.get('supervisor_id', '')
+        # url = self.request.build_absolute_uri()
+        pk = self.kwargs['pk']
+        supervisor = Supervisor.objects.get(user=supervisor_id) 
+        user = self.request.user                       
+        student = Student.objects.get(user=user)                   
+        form = form.save(commit=False)
+        form.student = student      
+        form.supervisor = supervisor           
+        form.save()
+        messages.success(self.request, 'Project status was edited successfully')
+        notice = ModelNotifications.objects.create(student=student, supervisor=supervisor, notice=f"project content edited. <a href=\'/supervisor/project/upload/{pk}\'>view</a>",        
+        )        
+        return redirect("/project/upload/"+pk)    
+
+
+
+
+
 # view for student to upload project contents,
 # as well as notify the supervisor
 class StudentProjectUpload(CreateView):
     model = ProjectUplaod
-    fields = ('title', 'detail', 'file', 'file2' )
+    fields = ('title', 'detail',  )
     template_name = 'students/project_upload.html'
 
     def form_valid(self, form):
@@ -99,6 +195,8 @@ class StudentProjectUpload(CreateView):
             return redirect('home')
 
 
+
+
 # view for displaying informations about curently logged in user
 # project, profile and project status
 class StudentProject(View):
@@ -114,10 +212,13 @@ class StudentProject(View):
         if user.is_superuser:
             project = Project.objects.all()
         else:
-            student = Student.objects.get(user=user)   
+            try:
+                student = Student.objects.get(user=user)   
+            except:
+                return redirect('/accounts/logout')
             try:
                 project_id = Project.objects.get(student=student)
-                uploads = ProjectUplaod.objects.filter(project_id=project_id)
+                uploads = ProjectUplaod.objects.filter(project_id=project_id)               
                 project = None
             except:
                 pass                
@@ -133,8 +234,27 @@ class StudentProject(View):
             pass
         
         if not project:            
-            return render(request, self.template_name, {'project': "NO PROJECT ALLOCATED YET"})        
-        return render(request, self.template_name, {'project': project, 'project_uploads': uploads, 'notice':notice})
+            return render(request, self.template_name, {'project': "NO PROJECT ALLOCATED YET"})      
+        uploadsss = ProjectUplaod.objects.filter(student=student, project_id=project_id)
+        projects_uploaded = len(uploadsss)
+        total_marks = 0
+        expected_total = projects_uploaded * 100        
+
+        for  i in uploadsss:
+            graddd = i.grade
+            total_marks += i.grade
+        try:
+            cummulative = total_marks / expected_total * 100
+        except ZeroDivisionError: 
+            cummulative = 0
+
+        cummulative = f'{cummulative}%'
+
+        result = {'projects_uploaded': projects_uploaded, 'total_marks': total_marks, 'expected_total': expected_total,'cummulative': cummulative}
+
+        return render(request, self.template_name, {'project': project, 'project_uploads': uploads, 'notice':notice ,
+                                                            'result': result
+                                                        })
 
 
 # lits of projects contents uploaded by the logged in student

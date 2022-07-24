@@ -50,12 +50,14 @@
   </div>
 </div>
 {% endfor %}
-<small> *Your upload is automatically on 'pending' till your supervisor approves it or declines it.</small>    
+<small> *Your upload is automatically on 'pending' till your supervisor approves it or declines it.</small>  <br>   
+<small> *use third party links like goole drive, dropbox etc. they are neater, more secured and safer than direct uploading of files</small> 
   <br><br><br>
-  <div class="rounded border border-3 p-3" style="background-color: rgba(241, 236, 236, 0.89);">
-    <div class="col-md-6 col-sm-8 col-12">
+  <div class="rounded border border-3 " style="background-color: rgba(241, 236, 236, 0.89);">
+    <div class="">
       <form class="form-control" method="post"  enctype="multipart/form-data" >
         {% csrf_token %}
+        {{ form.media }}
         {{ form|crispy }}
         <br>
         <button type="submit" class="btn btn-success">Save</button>

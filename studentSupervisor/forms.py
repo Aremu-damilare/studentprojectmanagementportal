@@ -42,7 +42,7 @@ class StudentSignUpForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):
         model = User
         fields = ('username', 'first_name', 'last_name', 'email', 'password1', 'password2', 
-        'department', 'institution', 'profile_pix', 'state_of_origin'
+        'department', 'institution', 'profile_pix', 
         )
     #     date_of_birth=forms.DateTimeField(
     #     input_formats=['%d/%m/%Y %H:%M'],
@@ -70,7 +70,7 @@ class SupervisorSignUpForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):
         model = User
         fields = ('username', 'first_name', 'last_name', 'email', 'password1', 'password2', 
-        'department', 'institution', 'profile_pix', 'state_of_origin'
+        'department', 'institution', 'profile_pix', 
         )
     #     date_of_birth=forms.DateTimeField(
     #     input_formats=['%d/%m/%Y %H:%M'],

@@ -26,7 +26,7 @@ textarea {
 
 {% include 'students/navbar.html' %}
 
-  <br><h2 class="text-center"> <p> Project Topic: {{ project.title }}</p>  </h2><br>
+  <br><h2 class="text-center"> <p>{{ project.title }}</p>  </h2><br>
   
   {% for message in messages %}
 <div class="container-fluid p-0">
@@ -43,36 +43,40 @@ textarea {
     <div class="rounded-top border border-1 p-3 text-center">
      
         <h1>
-            {{ object.title }}
-        </h1> <br>
+            {{ object.title }} 
+        </h1> <div class="rounded border border-2 p-2 m-3" style="background-color: rgba(53, 163, 95, 0.808);">
+          Grade: <span id="grade_mark"> {{ object.grade }} </span>  <br>
+        Remark: <span id="grade_remark"></span>
+      </div>
         <p>
-            {{ object.detail }}
+            {{ object.detail| truncatewords_html:200 | safe }}
         </p>
-  
-        <p> {% if object.file %}
+        <a  role="button"  class="btn btn-primary btn-sm" href="{% url 'update_project_content_student' object.pk %}?supervisor_id={{object.supervisor.user.id}}"> update </a> |
+        <a role="button"  class="btn btn-primary btn-sm"  href="{% url 'project_upload_content_detail' object.pk %}"> view full </a>
+        <!-- <p> {% if object.file %}
          Document: <a href="{{object.file.url }}"> {{ object.file }} </a>          
           {% endif %}
         </p>
         <p> {% if object.file2 %}
           Document: <a href="{{object.file2.url }}"> {{ object.file2 }} </a>          
           {% endif %}
-        </p>
+        </p> -->
 
         <br><br>
         <div class="rounded border border-2 p-1" style="background-color: rgba(151, 107, 107, 0.808);"><br>
           {% if object.status == 'approved' %}
-          <small> <img height="30px" src="{% static 'img/verified.svg' %}" alt="vverified"> {{ object.status }}</small>
+          <small> <img height="20px" src="{% static 'img/verified.svg' %}" alt="vverified"> {{ object.status }}</small>
           {% endif %}
 
           {% if object.status == 'pending' %}
-          <small> <img height="30px" src="{% static 'img/unverified.svg' %}" alt="vverified"> {{ object.status }}</small>
+          <small> <img height="20px" src="{% static 'img/unverified.svg' %}" alt="vverified"> {{ object.status }}</small>
           {% endif %}
 
           {% if object.status == 'declined' %}
-          <small> <img height="30px" src="{% static 'img/declined.svg' %}" alt="vverified"> {{ object.status }}</small>
+          <small> <img height="20px" src="{% static 'img/declined.svg' %}" alt="vverified"> {{ object.status }}</small>
           {% endif %}
-                <br>
-        <p> Supervisor: {{ project.supervisor }}</p>       
+                <br> <br>
+        <p> Last edited by: {{ project.supervisor }}</p>       
         <br> 
         </div>
     </div>
@@ -105,6 +109,34 @@ textarea {
        
       </form>
     </div>      
-
   </div>
+
+  <script>
+    var grade_status;
+    grade_value = document.getElementById("grade_mark").innerText;
+
+    if (grade_value == 0){
+      grade_status ='0 recorded';
+    } 
+    else if ( grade_value >= 1 || grade_status <= 45 ){
+      grade_status = 'F: Not good enough';
+    } 
+    if ( grade_value >= 46 || grade_status <= 49 ){
+      grade_status = 'D: Poor';
+    } 
+    if( grade_value >= 50 || grade_status <= 59 ){
+      grade_status = 'C: Average';
+    } 
+    if( grade_value >= 60 || grade_status <= 69 ){
+      grade_status = 'B: Good';
+    } 
+    if ( grade_value >= 70 ) {
+      grade_status = 'A: Very Good';
+    }
+    
+    grade_remark = document.getElementById("grade_remark").innerHTML = grade_status;
+
+   
+
+  </script>
 {% endblock %}

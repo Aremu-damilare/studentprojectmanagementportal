@@ -6,9 +6,35 @@
 {% include 'students/navbar.html' %}
 {% endif%}
 <br><br>
+<style>
+  .errorlist{
+    color:red ;
+  }
+  input {  
+  width: 60%;
+  padding: 12px 20px;
+  box-sizing: border-box;
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  background-color: #f8f8f8;
+  font-size: 16px;
+  height: 20px;
+}
+</style>
 <a class="btn btn-outline-danger" href="/accounts/logout" style="color: red; align-items: right;" > logout </a> <br><br>
 
 <div class="card rounded-top border border-1 p-3">
+  
+  {% for message in messages %}
+  <div class="container-fluid p-0">
+    <div class="alert {{ message.tags }} alert-dismissible" role="alert" >
+      <button onClick="window.location.href=window.location.href" type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="True">&times;</span>
+      </button>
+      {{ message }}
+    </div>
+  </div>
+  {% endfor %}
 
   {% for n in notice %}    
     <div class="alert alert-primary alert-dismissible fade show" role="alert">
@@ -29,7 +55,16 @@
   </div>
   
       {% if project.id %}
-      <p style="color: Blue ;" class="text-center">Project Status: {{project.status}}</p>
+      <div class="container-fluid p-0">
+        <div class="rounded border border-2 p-2 m-3" style="background-color: rgba(67, 95, 219, 0.808);">
+          <p style="color: rgb(255, 255, 255);" class="text-center">Project Status: {{project.status}}</p>
+          <p style="color: rgb(255, 255, 255);" class="text-center">Cummulative: {{ result.cummulative }}</p>
+          <div class="progress">
+            <div class="progress-bar" role="progressbar" style="width: {{ result.cummulative }}" aria-valuenow="{{ result.cummulative }}" aria-valuemin="0" aria-valuemax="100"> {{ result.cummulative }} </div>
+          </div>    
+        </div>
+      </div>
+     
       {% else %}
       <p style="color: red;" class="text-center" > NO SUPERVISOR YET</p>
       {% endif %}
@@ -41,30 +76,40 @@
       <img src="/media/{{project.student.user.profile_pix}}" class="rounded-circle z-depth-2" alt="" height="200px" width="200px">
     </div>
     <br><br> <img height="50px" src="{% static 'img/folder.svg' %}" alt="title">
-    <h5 class="card-title">Project Topic: {{ project }}</h5>    
+    <h4 class="card-title mb-3">Project Topic: {{ project.topic }}</h4>    
     <p class="lead">Full name: {{ project.student.user.first_name }}&nbsp; {{ project.student.user.last_name }}
      <br> Institution: {{ project.student.user.institution }}
-     <br> Department: {{ project.student.user.department }}
-     <br> State of origin: {{ project.student.user.state_of_origin }}
-     <br> Date of birth: {{ project.student.user.date_of_birth }}
+     <br> Department: {{ project.student.user.department }}         
      <br> Project Supervisor: {{ project.supervisor }}
-
     </p>
-    <p class="lead"></p>
+    {% if project.status == 'disapproved' %} <br><br>
+    <p class="lead">      
+      <form class="form-control p-2" action="{% url 'project_title_update' project.pk %}" method="post">
+        {% csrf_token %}                                                  
+        <input type="hidden" name="supervisor_id" value="{{project.supervisor.user.id}}">
+        <label for="topic"> Project topic </label><br> 
+        <input  type="text" name="topic"  placeholder="update your project topic...."/>         
+        <p style="color: red;" ><i> {{ form.errors }} </i></p>         
+        <button type="submit" class="btn btn-success"> send </button> 
+      </form>      
+    </p>
+    {% endif %}
     <p class="lead"></p>
     <p class="lead"></p>
     <p class="lead"></p>
     <p class="lead"></p>
     <!-- <p class="card-text">Project Student: {{ project.student }}</p> -->
-    <small> Project ID: {{project.id}} </small>
+    <!-- <small> Project ID: {{project.id}} </small> -->
     {% endif %}
   </div>  
 </div>
-     
-    
 
-<br><br><br><br><br><br>    
-  
+
+<br><br><br>
+{% if project.status == 'disapproved' %}
+<h5 style="color: red;" >Your project status is disapproved, You can't perform upload actions. Message your supervisor. <br><br><br></h5>
+{% else %}
+
 {% if project.id %}
   <h3 class="text-center" >Uploaded Projects <br><br>   
     <a href="{% url 'project_upload' %}" class="btn btn-success">Upload new project content</a>
@@ -95,7 +140,7 @@
               />
           <div class="ms-3">
             <p class="fw-bold mb-1"><a href="{%  url 'project_upload_detail' i.pk %}"> {{i.title}} </a></p>
-            <p class="text-muted mb-0">{{ project.title }}</p>
+            <p class="text-muted mb-0">{{ project.title }} ( Grade: {{ i.grade }} )</p>
             <p class="text-muted mb-0"><small>{{i.created_on}}</small></p>
           </div>
         </div>
@@ -121,6 +166,7 @@
     </tr>
     {% endfor %}
   {% endif  %}
+  {% endif %}
   </tbody>
 </table>
 
